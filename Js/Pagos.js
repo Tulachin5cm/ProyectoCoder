@@ -1,3 +1,7 @@
+const btnPagar = document.getElementById("#btnPagar");
+const formTarjetaDebito = document.getElementById('formTarjetaDebito');
+const formTarjetaCredito = document.getElementById('formTarjetaCredito');
+
 function mostrarTotalCarritoConProductos() {
     const obtenerCarrito = (nombre) => JSON.parse(localStorage.getItem(nombre)) || [];
     const carrito1 = obtenerCarrito('armados');
@@ -33,30 +37,28 @@ function mostrarTarjetaDebito() {
     detallePago.innerHTML = `
         <form id="formTarjetaDebito">
             <label for="numTarjetaDebito">Número de Tarjeta:</label>
-            <input placeholder="1234-5678-9123-4567" type="text" id="numTarjetaDebito" name="numTarjetaDebito" required pattern="[0-9]{16}" title="Ingrese un número de tarjeta válido de 16 dígitos">
+            <input placeholder="1234-5678-9123-4567" type="text" id="numTarjetaDebito" name="numTarjetaDebito" " title="Ingrese un número de tarjeta válido de 16 dígitos">
             <label for="cvvDebito">CVV:</label>
-            <input placeholder="***" type="password" id="cvvDebito" name="cvvDebito" required pattern="[0-9]{3}" title="Ingrese un CVV válido de 3 dígitos">
-            <button type="button" onclick="validarPagoD('formTarjetaDebito')">Pagar</button>
+            <input placeholder="***" type="password" id="cvvDebito" name="cvvDebito" required title="Ingrese un CVV válido de 3 dígitos">
+            <button Id="btnPagar" type="button" onclick="validarPagoD('formTarjetaDebito')">Pagar</button>
         </form>
     `;
 }
-
 
 function mostrarTarjetaCredito() {
     const detallePago = document.getElementById('detallePago');
     detallePago.innerHTML = `
         <form id="formTarjetaCredito">
             <label for="numTarjetaCredito">Número de Tarjeta:</label>
-            <input placeholder="1234-5678-9123-4567" type="text" id="numTarjetaCredito" name="numTarjetaCredito" required pattern="[0-9]{16}" title="Ingrese un número de tarjeta válido de 16 dígitos">
+            <input placeholder="1234-5678-9123-4567" type="text" id="numTarjetaCredito" name="numTarjetaCredito" title="Ingrese un número de tarjeta válido de 16 dígitos">
             <label for="cvvCredito">CVV:</label>
             <input placeholder="***" type="password" id="cvvCredito" name="cvvCredito" required pattern="[0-9]{3}" title="Ingrese un CVV válido de 3 dígitos">
             <label for="fechaExpiracion">Fecha de Expiración:</label>
             <input placeholder="MM/YY" type="text" id="fechaExpiracion" name="fechaExpiracion" required pattern="(0[1-9]|1[0-2])\/\d{2}" title="Ingrese una fecha de expiración válida en el formato MM/YY">
-            <button type="button" onclick="validarPagoC('formTarjetaCredito')">Pagar</button>
+            <button Id="btnPagar" type="button" onclick="validarPagoC('formTarjetaCredito')">Pagar</button>
         </form>
     `;
 }
-
 
 function mostrarTransferencia() {
     const detallePago = document.getElementById('detallePago');
@@ -79,10 +81,11 @@ function mostrarTransferencia() {
             </h6>
             <br>
             </div> 
-            <button type="button" onclick="realizarPago()">Pagar</button>
+            <button type="button"  Id="btnPagar" onclick="realizarPago()">Pagar</button>
     `;
 }
 
+let validar = false;
 
 
 function realizarPago() {
@@ -93,21 +96,28 @@ function realizarPago() {
         showConfirmButton: false,
         timer: 1500
       });
+      limpiar();
+      setTimeout(()=>{
+        window.location.href = "../Html/Inicio.html";
+      },2000);
 }
+
 function validarPagoD(formId) {
     const form = document.getElementById(formId);
-    const numTarjetaDebito = form.querySelector("#numTarjetaDebito")
+    const numTarjetaDebito = form.querySelector("#numTarjetaDebito").value;
     const cvvInput = form.querySelector('#cvvDebito');
     const cvv = cvvInput.value;
 
-    if(numTarjetaDebito.length !==16 ){
+    
+    if(!numeroTarjetaValido(numTarjetaDebito)){
         Swal.fire({
             icon: "error",
             title: "Error",
             text: "El número de la tarjeta debe ser de 16 dígitos",
         });
+        return;
     }
-    else if (cvv.length !== 3) {
+    if (!CvvValido(cvv)) {
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -115,24 +125,17 @@ function validarPagoD(formId) {
         });
         return;
     }
-    else if (form.checkValidity()) {
-        realizarPago();
-    } else {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Por favor complete correctamente todos los campos.",
-        });
-    }
+    realizarPago();
+    
 }
 function validarPagoC(formId) {
     const form = document.getElementById(formId);
-    const numTarjetaCredito = form.querySelector("#numTarjetaCredito")
+    const numTarjetaCredito = form.querySelector("#numTarjetaCredito").value;
     const cvvInput = form.querySelector('#cvvCredito');
     const fechaExpiracion = form.querySelector('#fechaExpiracion').value;
-
     const cvv = cvvInput.value;
-    if(numTarjetaCredito=16 ){
+
+    if(!numeroTarjetaValido(numTarjetaCredito)){
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -140,7 +143,7 @@ function validarPagoC(formId) {
         });
         return;
     }
-    else if (cvv.length !== 3) {
+    if (!CvvValido(cvv)) {
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -156,17 +159,28 @@ function validarPagoC(formId) {
         });
         return;
     }
-    else if (form.checkValidity()) {
-        realizarPago();
-    } else {
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Por favor complete correctamente todos los campos.",
-        });
-    }
+    realizarPago();
+    
 }
 
+function limpiar(){
+    localStorage.removeItem('carrito');
+    localStorage.removeItem('armados');
+
+    if(formTarjetaDebito) formTarjetaDebito.reset();
+
+    if(formTarjetaCredito) formTarjetaCredito.reset();
+}
+//funcion para validar el numero de la tarjeta
+function numeroTarjetaValido(numTarjeta) {
+    const numTarjetaSinEspacios = numTarjeta.replace(/\s+/g, ''); 
+    return /^\d{16}$/.test(numTarjetaSinEspacios);
+}
+// Función para validar el CVV
+function CvvValido(cvv) {
+    return /^\d{3}$/.test(cvv);
+}
+//Funcion para validar fecha
 function validarFecha(fecha) {
     const regex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     
