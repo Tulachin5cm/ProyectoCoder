@@ -117,7 +117,7 @@ function validarPagoD(formId) {
         });
         return;
     }
-    if (!CvvValido(cvv)) {
+    if (!cvvValido(cvv)) {
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -143,7 +143,7 @@ function validarPagoC(formId) {
         });
         return;
     }
-    if (!CvvValido(cvv)) {
+    if (!cvvValido(cvv)) {
         Swal.fire({
             icon: "error",
             title: "Error",
@@ -177,7 +177,7 @@ function numeroTarjetaValido(numTarjeta) {
     return /^\d{16}$/.test(numTarjetaSinEspacios);
 }
 // Función para validar el CVV
-function CvvValido(cvv) {
+function cvvValido(cvv) {
     return /^\d{3}$/.test(cvv);
 }
 //Funcion para validar fecha
