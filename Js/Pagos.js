@@ -99,7 +99,7 @@ function realizarPago() {
       limpiar();
       setTimeout(()=>{
         window.location.href = "../Html/Inicio.html";
-      },2000);
+      },3000);
 }
 
 function validarPagoD(formId) {
